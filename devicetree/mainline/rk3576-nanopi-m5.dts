@@ -212,34 +212,34 @@
 		vin-supply = <&vcc_3v3_s3>;
 	};
 
-	sound {
-		compatible = "simple-audio-card";
-		pinctrl-names = "default";
-		pinctrl-0 = <&hp_det_l>;
+	// sound {
+	// 	compatible = "simple-audio-card";
+	// 	pinctrl-names = "default";
+	// 	pinctrl-0 = <&hp_det_l>;
 
-		simple-audio-card,bitclock-master = <&masterdai>;
-		simple-audio-card,format = "i2s";
-		simple-audio-card,hp-det-gpios = <&gpio2 RK_PD6 GPIO_ACTIVE_LOW>;
-		simple-audio-card,mclk-fs = <256>;
-		simple-audio-card,name = "Onboard Analog RT5616";
+	// 	simple-audio-card,bitclock-master = <&masterdai>;
+	// 	simple-audio-card,format = "i2s";
+	// 	simple-audio-card,hp-det-gpios = <&gpio2 RK_PD6 GPIO_ACTIVE_LOW>;
+	// 	simple-audio-card,mclk-fs = <256>;
+	// 	simple-audio-card,name = "Onboard Analog RT5616";
 
-		simple-audio-card,routing =
-			"Headphones", "HPOL",
-			"Headphones", "HPOR",
-			"IN1P", "Microphone Jack";
-		simple-audio-card,widgets =
-			"Headphone", "Headphones",
-			"Microphone", "Microphone Jack";
+	// 	simple-audio-card,routing =
+	// 		"Headphones", "HPOL",
+	// 		"Headphones", "HPOR",
+	// 		"IN1P", "Microphone Jack";
+	// 	simple-audio-card,widgets =
+	// 		"Headphone", "Headphones",
+	// 		"Microphone", "Microphone Jack";
 
-		simple-audio-card,codec {
-			sound-dai = <&rt5616>;
-		};
+	// 	simple-audio-card,codec {
+	// 		sound-dai = <&rt5616>;
+	// 	};
 
-		masterdai: simple-audio-card,cpu {
-			sound-dai = <&sai2>;
-			system-clock-frequency = <12288000>;
-		};
-	};
+	// 	masterdai: simple-audio-card,cpu {
+	// 		sound-dai = <&sai2>;
+	// 		system-clock-frequency = <12288000>;
+	// 	};
+	// };
 };
 
 &combphy0_ps {
