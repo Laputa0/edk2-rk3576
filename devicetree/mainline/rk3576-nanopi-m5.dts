@@ -41,19 +41,19 @@
 		};
 	};
 
-	keys {
-		compatible = "gpio-keys";
+	// keys {
+	// 	compatible = "gpio-keys";
 
-		usr_button: key-1 {
-			debounce-interval = <50>;
-			gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_LOW>;
-			label = "user";
-			linux,code = <BTN_1>;
-			pinctrl-names = "default";
-			pinctrl-0 = <&usr_button_l>;
-			wakeup-source;
-		};
-	};
+	// 	usr_button: key-1 {
+	// 		debounce-interval = <50>;
+	// 		gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_LOW>;
+	// 		label = "user";
+	// 		linux,code = <BTN_1>;
+	// 		pinctrl-names = "default";
+	// 		pinctrl-0 = <&usr_button_l>;
+	// 		wakeup-source;
+	// 	};
+	// };
 
 	leds {
 		compatible = "gpio-leds";
