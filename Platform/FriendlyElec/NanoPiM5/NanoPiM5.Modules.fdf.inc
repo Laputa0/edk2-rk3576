@@ -1,0 +1,21 @@
+## @file
+#  ROCK 4D board-level FV module list
+#  Primary mode: FDT (Device Tree) for Armbian/Radxa/Rockchip BSP Linux.
+#  ACPI tables (for Windows ARM64) are a future work item.
+#
+#  Copyright (c) 2023-2025, Mario Bălănică <mariobalanica02@gmail.com>
+#  Copyright (c) 2026, gahingwoo <huhuvmb88@outlook.com>
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+  # ACPI tables — disabled: FDT-only build.
+  # INF RuleOverride = ACPITABLE $(PLATFORM_DIRECTORY)/AcpiTables/AcpiTables.inf
+
+  # Vendor Device Tree (pre-compiled DTB from U-Boot upstream)
+  INF RuleOverride = DTB $(PLATFORM_DIRECTORY)/DeviceTree/Vendor.inf
+
+  # Mainline Device Tree (mainline kernel DTS + UEFI overlay, built at compile time)
+  INF RuleOverride = DTB $(PLATFORM_DIRECTORY)/DeviceTree/Mainline.inf
+
+  # Splash screen logo
+  INF $(VENDOR_DIRECTORY)/Drivers/LogoDxe/LogoDxe.inf
