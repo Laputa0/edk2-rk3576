@@ -7,14 +7,12 @@
  *  the Realtek one, so on that board PhyInit() fell through to
  *  "Unknown PHY ID" and the PHY was never configured at all.
  *
- *  ---------------------------------------------------------------------------
- *  NOT VERIFIED ON HARDWARE.  This is a faithful port of the register writes
- *  mainline performs, but nobody has watched a link come up with it.  It also
- *  is very likely NOT SUFFICIENT ON ITS OWN for CM5-IO: the part fitted there
- *  is the crystal-less variant, which needs the SoC to drive 25 MHz into it on
- *  clk_mac_refout.  That is a CRU/GRF change this driver does not make.  Treat
- *  a still-dead link as expected until that piece exists.
- *  ---------------------------------------------------------------------------
+ *  Verified on CM5-IO, 2026-10-01: with RXC_DLY_EN clear (see Yt8531PhyInit)
+ *  UEFI receives without CRC errors and Windows gets a DHCP lease.  The part
+ *  fitted there is the crystal-less variant, which needs the SoC to drive
+ *  25 MHz into it on clk_mac_refout.  This driver does not make that CRU
+ *  change; on CM5-IO the platform library's GmacIomux() does, before the PHY
+ *  leaves reset.
  *
  *  Reference: linux/drivers/net/phy/motorcomm.c
  *    yt8531_config_init() -> ytphy_rgmii_clk_delay_config() + yt8531_set_ds()
@@ -112,9 +110,14 @@ YtPhyModifyExt (
 /**
   Program the RGMII clock delays and RX pad drive strength.
 
-  GMAC0 on both supported boards runs RGMII-ID — the delays are generated in
-  the PHY, not the MAC — which in mainline terms means RXC delay enable stays
-  on and both the rx and ge_tx delay fields get programmed.
+  GMAC0 on both supported boards runs RGMII-ID: the delays are generated in
+  the PHY, not the MAC, so both the rx and ge_tx delay fields get programmed.
+
+  RXC_DLY_EN must be CLEAR. It adds a fixed delay on top of the rx field, and
+  mainline clears it whenever the devicetree has no rx-internal-delay-ps
+  (ytphy_get_delay_reg_value(): "the rx default ... is 1950 ps, so
+  YT8521_CCR_RXC_DLY_EN should not be set"). This code used to set it, and
+  every received frame on CM5-IO failed its CRC.
 **/
 STATIC
 VOID
@@ -125,12 +128,12 @@ Yt8531PhyInit (
   UINT16  Val;
   UINT16  Ds;
 
-  /* RGMII-ID: keep the RXC delay block enabled. */
+  /* rx delay comes from the 1.950 ns field alone; see above. */
   YtPhyModifyExt (
     GmacBase,
     YT8521_CHIP_CONFIG_REG,
     YT8521_CCR_RXC_DLY_EN,
-    YT8521_CCR_RXC_DLY_EN
+    0
     );
 
   /*
@@ -190,14 +193,6 @@ MotorcommPhyInit (
     default:
       return EFI_UNSUPPORTED;
   }
-
-  DEBUG ((
-    DEBUG_WARN,
-    "%a: YT8531 init is UNVERIFIED on hardware, and the crystal-less part on "
-    "CM5-IO additionally needs 25 MHz on clk_mac_refout, which is not "
-    "programmed here — do not read a dead link as a bug in this code alone\n",
-    __func__
-    ));
 
   return EFI_SUCCESS;
 }
